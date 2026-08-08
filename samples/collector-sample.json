@@ -1,0 +1,73 @@
+{
+  "collectorVersion": "1.2.0",
+  "collectedAt": "2026-08-08T05:00:00.000Z",
+  "clientCode": "US-VGC",
+  "environment": "Production",
+  "tables": [
+    {
+      "tableName": "Table 101",
+      "tableCode": "US-VGC-T101",
+      "firmwareVer": "FW-4.3.2",
+      "appVersion": "PP-23.1.0",
+      "osInfo": "Ubuntu 22.04 LTS",
+      "cpuUsage": 36,
+      "memoryUsage": 52,
+      "storageUsage": 41,
+      "networkInfo": "eth0 1Gbps · latency 6ms",
+      "serviceStatus": "Running",
+      "peripherals": [
+        { "name": "Chip Tray Sensor", "type": "Sensor", "status": "OK" },
+        { "name": "RFID Antenna", "type": "RFID", "status": "OK" }
+      ],
+      "logs": [
+        { "level": "INFO", "category": "Service", "message": "Heartbeat OK" }
+      ]
+    },
+    {
+      "tableName": "Table 102",
+      "tableCode": "US-VGC-T102",
+      "firmwareVer": "FW-4.2.9",
+      "appVersion": "PP-23.0.4",
+      "osInfo": "Ubuntu 22.04 LTS",
+      "cpuUsage": 91,
+      "memoryUsage": 88,
+      "storageUsage": 67,
+      "networkInfo": "eth0 1Gbps · latency 28ms",
+      "serviceStatus": "Running",
+      "peripherals": [
+        { "name": "Dealer Display", "type": "Display", "status": "Fault" },
+        { "name": "RFID Antenna", "type": "RFID", "status": "Degraded" }
+      ],
+      "logs": [
+        { "level": "ERROR", "category": "Hardware", "message": "Dealer display backlight failure" }
+      ],
+      "findings": [
+        {
+          "severity": "CRITICAL",
+          "category": "Hardware",
+          "title": "Dealer display fault",
+          "description": "Display peripheral reporting fault with elevated CPU.",
+          "recommendation": "Replace display module and re-run collector."
+        }
+      ]
+    },
+    {
+      "tableName": "Table 103",
+      "tableCode": "US-VGC-T103",
+      "firmwareVer": "FW-4.1.0",
+      "appVersion": "PP-22.8.1",
+      "osInfo": "Windows Server 2019",
+      "cpuUsage": 12,
+      "memoryUsage": 33,
+      "storageUsage": 55,
+      "networkInfo": "unreachable",
+      "serviceStatus": "Stopped",
+      "peripherals": [
+        { "name": "Chip Tray Sensor", "type": "Sensor", "status": "Offline" }
+      ],
+      "logs": [
+        { "level": "ERROR", "category": "Connectivity", "message": "No heartbeat for 45 minutes" }
+      ]
+    }
+  ]
+}

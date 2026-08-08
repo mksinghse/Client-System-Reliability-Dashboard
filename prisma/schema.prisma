@@ -1,0 +1,195 @@
+// Client System Reliability Dashboard — Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum HealthStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+  OFFLINE
+}
+
+enum UserRole {
+  VIEWER
+  OPERATOR
+  ADMIN
+}
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+  PARTIAL
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(VIEWER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  auditLogs AuditLog[]
+  uploads   CollectorUpload[]
+}
+
+model Country {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  name         String
+  region       String
+  latitude     Float?
+  longitude    Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  clients      Client[]
+}
+
+model Client {
+  id              String   @id @default(cuid())
+  name            String
+  code            String   @unique
+  countryId       String
+  country         Country  @relation(fields: [countryId], references: [id])
+  environment     String   @default("Production")
+  healthScore     Float    @default(100)
+  healthStatus    HealthStatus @default(HEALTHY)
+  tableCount      Int      @default(0)
+  criticalIssues  Int      @default(0)
+  warningIssues   Int      @default(0)
+  availabilityPct Float    @default(100)
+  lastUploadAt    DateTime?
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tables          HardwareTable[]
+  uploads         CollectorUpload[]
+  diagnostics     DiagnosticFinding[]
+  healthSnapshots HealthSnapshot[]
+  metrics         ClientMetric[]
+}
+
+model HardwareTable {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  tableName     String
+  tableCode     String
+  status        HealthStatus @default(HEALTHY)
+  firmwareVer   String?
+  appVersion    String?
+  osInfo        String?
+  cpuUsage      Float?
+  memoryUsage   Float?
+  storageUsage  Float?
+  networkInfo   String?
+  serviceStatus String?
+  lastSeenAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  peripherals   Peripheral[]
+  logs          TableLog[]
+
+  @@unique([clientId, tableCode])
+  @@index([clientId, status])
+}
+
+model Peripheral {
+  id        String @id @default(cuid())
+  tableId   String
+  table     HardwareTable @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  name      String
+  type      String
+  status    String
+  details   String?
+}
+
+model TableLog {
+  id        String   @id @default(cuid())
+  tableId   String
+  table     HardwareTable @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  level     String
+  category  String
+  message   String
+  occurredAt DateTime @default(now())
+}
+
+model CollectorUpload {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id])
+  uploadedById  String?
+  uploadedBy    User?    @relation(fields: [uploadedById], references: [id])
+  fileName      String
+  fileSize      Int      @default(0)
+  status        UploadStatus @default(PENDING)
+  parsedTables  Int      @default(0)
+  errorMessage  String?
+  rawPayload    String?
+  processedAt   DateTime?
+  createdAt     DateTime @default(now())
+
+  @@index([clientId, createdAt])
+}
+
+model DiagnosticFinding {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  severity     HealthStatus
+  category     String
+  title        String
+  description  String
+  recommendation String?
+  tableCode    String?
+  resolved     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([clientId, severity])
+}
+
+model HealthSnapshot {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  healthScore  Float
+  healthy      Int
+  warning      Int
+  critical     Int
+  offline      Int
+  capturedAt   DateTime @default(now())
+
+  @@index([clientId, capturedAt])
+}
+
+model ClientMetric {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  metricKey String
+  value     Float
+  unit      String?
+  capturedAt DateTime @default(now())
+
+  @@index([clientId, metricKey, capturedAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  entityType String
+  entityId   String?
+  details    String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
