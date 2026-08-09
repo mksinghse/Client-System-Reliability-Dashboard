@@ -3,7 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm install --no-audit --no-fund
+        # Amplify app env sets NODE_ENV=production; keep install of build/dev deps.
+        - NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --include=dev --no-audit --no-fund
     build:
       commands:
         - npm run build
