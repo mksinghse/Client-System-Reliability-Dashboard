@@ -4,10 +4,7 @@ import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 let doc: DynamoDBDocumentClient | null = null;
 
 export function getTableName(): string {
-  const name = process.env.DYNAMODB_TABLE_NAME?.trim();
-  if (!name) {
-    throw new Error("DYNAMODB_TABLE_NAME is not set");
-  }
+  const name = process.env.DYNAMODB_TABLE_NAME?.trim() || "csrd-data";
   return name;
 }
 

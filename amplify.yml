@@ -7,6 +7,12 @@ frontend:
         - NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --include=dev --no-audit --no-fund
     build:
       commands:
+        # Persist Amplify console env vars into Next.js runtime (.env.production).
+        - |
+          {
+            echo "DYNAMODB_TABLE_NAME=${DYNAMODB_TABLE_NAME:-csrd-data}"
+            echo "DYNAMODB_REGION=${DYNAMODB_REGION:-ap-south-1}"
+          } > .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
