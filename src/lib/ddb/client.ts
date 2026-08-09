@@ -14,7 +14,11 @@ export function getTableName(): string {
 export function getDocClient(): DynamoDBDocumentClient {
   if (doc) return doc;
   const client = new DynamoDBClient({
-    region: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "us-east-1",
+    region:
+      process.env.DYNAMODB_REGION ||
+      process.env.AWS_REGION ||
+      process.env.AWS_DEFAULT_REGION ||
+      "ap-south-1",
     ...(process.env.DYNAMODB_ENDPOINT
       ? {
           endpoint: process.env.DYNAMODB_ENDPOINT,
