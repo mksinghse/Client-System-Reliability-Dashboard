@@ -49,12 +49,12 @@ export default async function ClientDetailPage({ params }: { params: Promise<{ i
       <div className="kpi-grid">
         <KpiCard label="Health Score" value={client.healthScore} />
         <KpiCard label="Environment" value={client.environment} />
-        <KpiCard label="Devices" value={client.tableCount} />
+        <KpiCard label="Devices" value={client.tableCount} href={`/devices?client=${encodeURIComponent(client.code)}`} />
         <KpiCard label="Last scan / upload" value={relativeTime(client.lastUploadAt)} />
       </div>
 
       {itx ? <ClientItxDashboardView data={itx} /> : null}
-      {!itx && deviceInfo ? <ClientFleetProfile info={deviceInfo} /> : null}
+      {!itx && deviceInfo ? <ClientFleetProfile info={deviceInfo} clientCode={client.code} /> : null}
 
       <div className="grid-2" style={{ marginTop: "1rem" }}>
         <div className="panel">

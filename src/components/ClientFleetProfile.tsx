@@ -2,17 +2,25 @@ import type { DeviceInfoClient } from "@/lib/device-info-comparison";
 import { KpiCard } from "./KpiCard";
 import { HealthBadge } from "./HealthBadge";
 
-export function ClientFleetProfile({ info }: { info: DeviceInfoClient }) {
+export function ClientFleetProfile({
+  info,
+  clientCode,
+}: {
+  info: DeviceInfoClient;
+  clientCode?: string;
+}) {
   const status =
     info.okPct >= 99 ? "HEALTHY" : info.okPct >= 95 ? "WARNING" : info.okPct >= 90 ? "CRITICAL" : "OFFLINE";
+  const client = clientCode || info.client;
+  const devicesHref = `/devices?client=${encodeURIComponent(client)}`;
 
   return (
     <div className="stack" style={{ marginTop: "1.1rem" }}>
       <div className="kpi-grid">
-        <KpiCard label="Devices" value={info.total} />
-        <KpiCard label="OK" value={info.ok} />
-        <KpiCard label="FAILED" value={info.failed} />
-        <KpiCard label="OK %" value={`${info.okPct}%`} />
+        <KpiCard label="Devices" value={info.total} href={devicesHref} />
+        <KpiCard label="OK" value={info.ok} href={`${devicesHref}&status=OK`} />
+        <KpiCard label="FAILED" value={info.failed} href={`${devicesHref}&status=FAILED`} />
+        <KpiCard label="OK %" value={`${info.okPct}%`} href={devicesHref} />
       </div>
 
       <div className="grid-2">
