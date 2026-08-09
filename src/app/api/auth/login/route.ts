@@ -29,8 +29,9 @@ export async function POST(request: Request) {
     return res;
   } catch (err) {
     console.error("login failed", err);
+    const detail = err instanceof Error ? err.message : "unknown error";
     return NextResponse.json(
-      { error: "Unable to sign in. Dashboard storage is unavailable." },
+      { error: "Unable to sign in. Dashboard storage is unavailable.", detail },
       { status: 500 },
     );
   }
