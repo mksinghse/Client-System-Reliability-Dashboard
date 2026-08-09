@@ -3,12 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - npm ci --omit=optional
     build:
       commands:
         - npm run build
   artifacts:
-    baseDirectory: .next
+    # Next.js SSR on Amplify Hosting expects the app root (includes .next + package files)
+    baseDirectory: .
     files:
       - "**/*"
   cache:
