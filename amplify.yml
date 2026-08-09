@@ -9,8 +9,7 @@ frontend:
       commands:
         - npm run build
   artifacts:
-    # Next.js SSR on Amplify Hosting expects the app root (includes .next + package files)
-    baseDirectory: .
+    baseDirectory: .next
     files:
       - "**/*"
   cache:
