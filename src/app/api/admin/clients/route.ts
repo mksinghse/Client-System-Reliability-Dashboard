@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { getSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -19,17 +19,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    const client = await prisma.client.create({
-      data: { name, code, countryId, environment },
-    });
-    await prisma.auditLog.create({
-      data: {
-        userId: session.id,
-        action: "CLIENT_CREATE",
-        entityType: "Client",
-        entityId: client.id,
-        details: `Created client ${code}`,
-      },
+    const client = await store.createClient({ name, code, countryId, environment });
+    await store.createAudit({
+      userId: session.id,
+      action: "CLIENT_CREATE",
+      entityType: "Client",
+      entityId: client.id,
+      details: `Created client ${code}`,
     });
     return NextResponse.json({ ok: true, client });
   } catch {

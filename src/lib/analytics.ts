@@ -1,32 +1,43 @@
-import { prisma } from "./db";
-import type { HealthStatus } from "@prisma/client";
+import { store } from "./ddb/store";
+import type { HealthStatus } from "./models";
+import { loadDevicesInventory } from "./devices-inventory";
 
 export async function getExecutiveOverview() {
-  const [countries, clients, tables, uploads, findings] = await Promise.all([
-    prisma.country.count(),
-    prisma.client.findMany({ where: { archived: false }, include: { country: true } }),
-    prisma.hardwareTable.groupBy({ by: ["status"], _count: { _all: true } }),
-    prisma.collectorUpload.findMany({
-      take: 8,
-      orderBy: { createdAt: "desc" },
-      include: { client: { include: { country: true } } },
-    }),
-    prisma.diagnosticFinding.groupBy({
-      by: ["category"],
-      where: { resolved: false },
-      _count: { _all: true },
-    }),
+  const [clients, statusMapRaw, uploads, findings] = await Promise.all([
+    store.listClients({ archived: false }),
+    store.groupTableStatus(),
+    store.listUploads({ take: 8 }),
+    store.groupFindingsByCategory(),
   ]);
 
-  const statusMap: Record<HealthStatus, number> = {
-    HEALTHY: 0,
-    WARNING: 0,
-    CRITICAL: 0,
-    OFFLINE: 0,
-  };
-  for (const row of tables) statusMap[row.status] = row._count._all;
+  const countriesWithClients = new Set(clients.map((c) => c.countryId)).size;
+  const statusMap: Record<HealthStatus, number> = { ...statusMapRaw };
 
-  const totalTables = Object.values(statusMap).reduce((a, b) => a + b, 0);
+  const hardwareTotal = Object.values(statusMap).reduce((a, b) => a + b, 0);
+  if (hardwareTotal === 0) {
+    for (const client of clients) {
+      const healthy = Math.max(0, client.tableCount - client.criticalIssues - client.warningIssues);
+      statusMap.HEALTHY += healthy;
+      statusMap.WARNING += client.warningIssues;
+      statusMap.CRITICAL += client.criticalIssues;
+    }
+  }
+
+  const inventory = loadDevicesInventory();
+  const totalTables =
+    hardwareTotal > 0
+      ? hardwareTotal
+      : inventory.count || clients.reduce((sum, c) => sum + c.tableCount, 0);
+
+  if (hardwareTotal === 0 && inventory.count) {
+    const ok = inventory.devices.filter((d) => d.status === "OK").length;
+    const failed = inventory.devices.filter((d) => d.status === "FAILED").length;
+    statusMap.HEALTHY = ok;
+    statusMap.WARNING = 0;
+    statusMap.CRITICAL = failed;
+    statusMap.OFFLINE = Math.max(0, inventory.count - ok - failed);
+  }
+
   const requiringAction = statusMap.WARNING + statusMap.CRITICAL + statusMap.OFFLINE;
 
   const regionMap = new Map<string, { region: string; tables: number; clients: number; critical: number }>();
@@ -43,41 +54,35 @@ export async function getExecutiveOverview() {
     regionMap.set(client.country.region, current);
   }
 
-  const countryStats = await prisma.country.findMany({
-    include: {
-      clients: {
-        where: { archived: false },
-        select: {
-          tableCount: true,
-          criticalIssues: true,
-          healthScore: true,
-          healthStatus: true,
-        },
-      },
-    },
+  const byCountry = new Map<string, typeof clients>();
+  for (const c of clients) {
+    const list = byCountry.get(c.countryId) ?? [];
+    list.push(c);
+    byCountry.set(c.countryId, list);
+  }
+
+  const mapPoints = Array.from(byCountry.entries()).map(([, list]) => {
+    const country = list[0].country;
+    return {
+      code: country.code,
+      name: country.name,
+      region: country.region,
+      latitude: country.latitude ?? 0,
+      longitude: country.longitude ?? 0,
+      clients: list.length,
+      tables: list.reduce((sum, x) => sum + x.tableCount, 0),
+      avgHealth: list.length
+        ? Math.round(list.reduce((sum, x) => sum + x.healthScore, 0) / list.length)
+        : 100,
+      critical: list.reduce((sum, x) => sum + x.criticalIssues, 0),
+    };
   });
 
-  const mapPoints = countryStats.map((c) => ({
-    code: c.code,
-    name: c.name,
-    region: c.region,
-    latitude: c.latitude ?? 0,
-    longitude: c.longitude ?? 0,
-    clients: c.clients.length,
-    tables: c.clients.reduce((sum, x) => sum + x.tableCount, 0),
-    avgHealth: c.clients.length
-      ? Math.round(c.clients.reduce((sum, x) => sum + x.healthScore, 0) / c.clients.length)
-      : 100,
-    critical: c.clients.reduce((sum, x) => sum + x.criticalIssues, 0),
-  }));
-
-  const snapshots = await prisma.healthSnapshot.findMany({
-    where: { capturedAt: { gte: new Date(Date.now() - 14 * 86400_000) } },
-    orderBy: { capturedAt: "asc" },
-  });
+  const since = new Date(Date.now() - 14 * 86400_000).toISOString();
+  const snapshots = await store.listSnapshots({ since, take: 500 });
   const trendBuckets = new Map<string, { date: string; score: number; n: number }>();
   for (const snap of snapshots) {
-    const date = snap.capturedAt.toISOString().slice(0, 10);
+    const date = snap.capturedAt.slice(0, 10);
     const bucket = trendBuckets.get(date) ?? { date, score: 0, n: 0 };
     bucket.score += snap.healthScore;
     bucket.n += 1;
@@ -86,7 +91,7 @@ export async function getExecutiveOverview() {
 
   return {
     kpis: {
-      totalCountries: countries,
+      totalCountries: countriesWithClients,
       totalClients: clients.length,
       totalTables,
       healthyTables: statusMap.HEALTHY,
@@ -103,8 +108,13 @@ export async function getExecutiveOverview() {
     ],
     regionStats: Array.from(regionMap.values()),
     mapPoints,
-    recentUploads: uploads,
-    issueBreakdown: findings.map((f) => ({ category: f.category, count: f._count._all })),
+    recentUploads: uploads.map((u) => ({
+      ...u,
+      client: u.client
+        ? { ...u.client, country: u.client.country }
+        : undefined,
+    })),
+    issueBreakdown: findings,
     trend: Array.from(trendBuckets.values()).map((b) => ({
       date: b.date,
       score: Math.round(b.score / b.n),
@@ -113,24 +123,21 @@ export async function getExecutiveOverview() {
 }
 
 export async function compareClients(clientIds: string[]) {
-  const clients = await prisma.client.findMany({
-    where: { id: { in: clientIds } },
-    include: {
-      country: true,
-      healthSnapshots: { orderBy: { capturedAt: "asc" }, take: 14 },
-      metrics: {
-        where: { metricKey: { in: ["cpu_avg", "incident_count"] } },
-        orderBy: { capturedAt: "desc" },
-        take: 30,
-      },
-      diagnostics: { where: { resolved: false } },
-    },
-  });
-
-  const rows = clients.map((c) => {
-    const cpu = c.metrics.filter((m) => m.metricKey === "cpu_avg");
+  const rows = [];
+  for (const id of clientIds) {
+    const c = await store.getClientById(id);
+    if (!c) continue;
+    const [healthSnapshots, metrics, diagnostics] = await Promise.all([
+      store.listSnapshots({ clientId: id, take: 14 }),
+      store.listMetrics(id, ["cpu_avg", "incident_count", "temp_avg", "heap_now_mb", "ok_pct", "hot70"], 60),
+      store.listFindings(id, true),
+    ]);
+    const latest = (key: string) => metrics.find((m) => m.metricKey === key)?.value;
+    const cpu = metrics.filter((m) => m.metricKey === "cpu_avg");
     const cpuAvg = cpu.length ? cpu.reduce((s, m) => s + m.value, 0) / cpu.length : 0;
-    return {
+    const heapMb = latest("heap_now_mb") ?? 0;
+    const tempAvg = latest("temp_avg") ?? 0;
+    rows.push({
       id: c.id,
       name: c.name,
       country: c.country.name,
@@ -139,11 +146,13 @@ export async function compareClients(clientIds: string[]) {
       criticalIssues: c.criticalIssues,
       warningIssues: c.warningIssues,
       availabilityPct: c.availabilityPct,
-      cpuUtilization: Math.round(cpuAvg),
-      openFindings: c.diagnostics.length,
-      trend: c.healthSnapshots.map((s) => ({ date: s.capturedAt.toISOString().slice(0, 10), score: s.healthScore })),
-    };
-  });
+      cpuUtilization: Math.round(cpuAvg || tempAvg),
+      heapMb: Math.round(heapMb),
+      tempAvg: Math.round(tempAvg * 10) / 10,
+      openFindings: diagnostics.length,
+      trend: healthSnapshots.map((s) => ({ date: s.capturedAt.slice(0, 10), score: s.healthScore })),
+    });
+  }
 
   const best = [...rows].sort((a, b) => b.healthScore - a.healthScore)[0] ?? null;
   const mostStable = [...rows].sort((a, b) => b.availabilityPct - a.availabilityPct)[0] ?? null;

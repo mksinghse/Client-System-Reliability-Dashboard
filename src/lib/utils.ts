@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { formatDistanceToNow } from "date-fns";
-import type { HealthStatus } from "@prisma/client";
+import type { HealthStatus } from "@/lib/models";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

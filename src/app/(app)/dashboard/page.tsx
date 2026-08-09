@@ -14,22 +14,26 @@ export default async function ExecutiveDashboardPage() {
       <div className="row">
         <div>
           <h1 className="page-title">Executive Dashboard</h1>
-          <p className="page-sub">Global hardware health, inventory posture, and collector activity across all countries and clients.</p>
+          <p className="page-sub">
+            Fleet posture from device-info client comparison. Only countries with data are listed; upload collector JSON with a new country/client to add regions automatically.
+          </p>
         </div>
-        <Link className="btn btn-teal" href="/admin/uploads">
-          Upload collector
-        </Link>
       </div>
 
       <div className="kpi-grid">
-        <KpiCard label="Countries" value={data.kpis.totalCountries} />
-        <KpiCard label="Clients" value={data.kpis.totalClients} />
-        <KpiCard label="Hardware Tables" value={data.kpis.totalTables} />
-        <KpiCard label="Requiring Action" value={data.kpis.requiringAction} hint="Warning + Critical + Offline" />
-        <KpiCard label="Healthy" value={data.kpis.healthyTables} />
-        <KpiCard label="Warning" value={data.kpis.warningTables} />
-        <KpiCard label="Critical" value={data.kpis.criticalTables} />
-        <KpiCard label="Offline" value={data.kpis.offlineTables} />
+        <KpiCard label="Countries" value={data.kpis.totalCountries} href="/countries" />
+        <KpiCard label="Clients" value={data.kpis.totalClients} href="/clients" />
+        <KpiCard label="Devices" value={data.kpis.totalTables} href="/devices" />
+        <KpiCard
+          label="Requiring Action"
+          value={data.kpis.requiringAction}
+          hint="Warning + Critical + Offline"
+          href="/devices?status=FAILED"
+        />
+        <KpiCard label="Healthy" value={data.kpis.healthyTables} href="/devices?status=OK" />
+        <KpiCard label="Warning" value={data.kpis.warningTables} href="/devices?status=WARNING" />
+        <KpiCard label="Critical" value={data.kpis.criticalTables} href="/devices?status=FAILED" />
+        <KpiCard label="Offline" value={data.kpis.offlineTables} href="/devices?status=OFFLINE" />
       </div>
 
       <div className="grid-2">

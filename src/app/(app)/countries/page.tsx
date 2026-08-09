@@ -1,60 +1,99 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { KpiCard } from "@/components/KpiCard";
 
 export default async function CountriesPage() {
-  const countries = await prisma.country.findMany({
-    include: {
-      clients: {
-        where: { archived: false },
-        select: {
-          id: true,
-          tableCount: true,
-          criticalIssues: true,
-          healthScore: true,
-        },
-      },
-    },
-    orderBy: { name: "asc" },
-  });
+  const clients = await store.listClients({ archived: false });
+  const byCountry = new Map<
+    string,
+    {
+      id: string;
+      code: string;
+      name: string;
+      region: string;
+      clients: Array<{ id: string; tableCount: number; criticalIssues: number; healthScore: number }>;
+    }
+  >();
+
+  for (const c of clients) {
+    const cur = byCountry.get(c.countryId) ?? {
+      id: c.country.id,
+      code: c.country.code,
+      name: c.country.name,
+      region: c.country.region,
+      clients: [],
+    };
+    cur.clients.push({
+      id: c.id,
+      tableCount: c.tableCount,
+      criticalIssues: c.criticalIssues,
+      healthScore: c.healthScore,
+    });
+    byCountry.set(c.countryId, cur);
+  }
+
+  const countries = Array.from(byCountry.values()).sort((a, b) => a.name.localeCompare(b.name));
+  const totalClients = countries.reduce((s, c) => s + c.clients.length, 0);
+  const totalTables = countries.reduce(
+    (s, c) => s + c.clients.reduce((a, x) => a + x.tableCount, 0),
+    0,
+  );
+  const openCritical = countries.reduce(
+    (s, c) => s + c.clients.reduce((a, x) => a + x.criticalIssues, 0),
+    0,
+  );
 
   return (
     <div>
       <h1 className="page-title">Countries</h1>
-      <p className="page-sub">Drill into country-level inventory, health score, and client portfolios.</p>
+      <p className="page-sub">
+        Only countries with client data are listed. New countries are added automatically when you upload
+        collector data under that country.
+      </p>
 
       <div className="kpi-grid">
-        <KpiCard label="Total Countries" value={countries.length} />
-        <KpiCard label="Total Clients" value={countries.reduce((s, c) => s + c.clients.length, 0)} />
-        <KpiCard label="Total Tables" value={countries.reduce((s, c) => s + c.clients.reduce((a, x) => a + x.tableCount, 0), 0)} />
-        <KpiCard label="Open Critical" value={countries.reduce((s, c) => s + c.clients.reduce((a, x) => a + x.criticalIssues, 0), 0)} />
+        <KpiCard label="Countries" value={countries.length} />
+        <KpiCard label="Clients" value={totalClients} href="/clients" />
+        <KpiCard label="Devices" value={totalTables} href="/devices" />
+        <KpiCard label="Critical issues" value={openCritical} />
       </div>
 
-      <div className="client-grid">
-        {countries.map((country) => {
-          const tables = country.clients.reduce((s, c) => s + c.tableCount, 0);
-          const critical = country.clients.reduce((s, c) => s + c.criticalIssues, 0);
-          const health = country.clients.length
-            ? Math.round(country.clients.reduce((s, c) => s + c.healthScore, 0) / country.clients.length)
-            : 100;
-          return (
-            <Link key={country.id} href={`/countries/${country.code}`} className="client-tile">
-              <div className="row">
-                <strong style={{ fontSize: "1.05rem", color: "var(--ink)" }}>{country.name}</strong>
-                <span className="badge healthy">{country.code}</span>
-              </div>
-              <p className="muted" style={{ margin: "0.45rem 0 0.8rem", fontSize: "0.85rem" }}>
-                {country.region}
-              </p>
-              <div className="stack-sm" style={{ fontSize: "0.9rem" }}>
-                <div className="row"><span className="muted">Clients</span><strong>{country.clients.length}</strong></div>
-                <div className="row"><span className="muted">Tables</span><strong>{tables}</strong></div>
-                <div className="row"><span className="muted">Health Score</span><strong>{health}</strong></div>
-                <div className="row"><span className="muted">Critical Issues</span><strong>{critical}</strong></div>
-              </div>
-            </Link>
-          );
-        })}
+      <div className="panel" style={{ marginTop: "1rem" }}>
+        <div className="panel-body">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Region</th>
+                <th>Clients</th>
+                <th>Devices</th>
+                <th>Critical</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {countries.map((c) => (
+                <tr key={c.id}>
+                  <td>
+                    <strong>{c.name}</strong>{" "}
+                    <span className="muted" style={{ fontSize: "0.8rem" }}>
+                      ({c.code})
+                    </span>
+                  </td>
+                  <td>{c.region}</td>
+                  <td>{c.clients.length}</td>
+                  <td>{c.clients.reduce((a, x) => a + x.tableCount, 0)}</td>
+                  <td>{c.clients.reduce((a, x) => a + x.criticalIssues, 0)}</td>
+                  <td>
+                    <Link className="btn btn-secondary" href={`/countries/${c.code}`}>
+                      Open
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

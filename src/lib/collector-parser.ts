@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { HealthStatus } from "@prisma/client";
+import type { HealthStatus } from "@/lib/models";
 import { scoreFromCounts, statusFromScore } from "./utils";
 
 const peripheralSchema = z.object({

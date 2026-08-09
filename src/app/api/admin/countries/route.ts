@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { getSession } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -20,17 +20,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const country = await prisma.country.create({
-      data: { name, code, region, latitude, longitude },
-    });
-    await prisma.auditLog.create({
-      data: {
-        userId: session.id,
-        action: "COUNTRY_CREATE",
-        entityType: "Country",
-        entityId: country.id,
-        details: `Created country ${code}`,
-      },
+    const existing = await store.getCountryByCode(code);
+    if (existing) throw new Error("exists");
+    const country = await store.upsertCountry({ name, code, region, latitude, longitude });
+    await store.createAudit({
+      userId: session.id,
+      action: "COUNTRY_CREATE",
+      entityType: "Country",
+      entityId: country.id,
+      details: `Created country ${code}`,
     });
     return NextResponse.json({ ok: true, country });
   } catch {

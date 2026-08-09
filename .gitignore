@@ -51,8 +51,6 @@ next-env.d.ts
 prisma/*.db
 prisma/*.db-journal
 
-# prisma auto-installed agent skill caches
-.agents/
-.claude/
-.windsurf/
-skills-lock.json
+# amplify
+amplify_outputs.json
+.amplify/

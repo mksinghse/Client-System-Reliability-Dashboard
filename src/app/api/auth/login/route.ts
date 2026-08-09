@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { SESSION_COOKIE } from "@/lib/auth";
 
 export async function POST(request: Request) {
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Email is required" }, { status: 400 });
   }
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await store.getUserByEmail(email);
   if (!user) {
     return NextResponse.json({ error: "Unknown work account. Use a seeded WDTS user." }, { status: 401 });
   }

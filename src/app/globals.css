@@ -217,6 +217,37 @@ textarea {
   padding: 1rem 1.05rem 1.1rem;
 }
 
+.kpi-card--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.kpi-card--link:hover {
+  border-color: var(--brand-primary);
+  transform: translateY(-1px);
+}
+
+.kpi-card--link:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+.table-scroll {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.table--dense th,
+.table--dense td {
+  white-space: nowrap;
+  font-size: 0.78rem;
+  padding: 0.45rem 0.65rem;
+}
+
 .kpi-card h3 {
   margin: 0;
   font-size: 0.78rem;

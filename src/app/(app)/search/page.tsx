@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { HealthBadge } from "@/components/HealthBadge";
 
 export default async function SearchPage({
@@ -8,43 +8,53 @@ export default async function SearchPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q = "" } = await searchParams;
-  const query = q.trim();
+  const query = q.trim().toLowerCase();
 
-  const [countries, clients, tables] = query
-    ? await Promise.all([
-        prisma.country.findMany({
-          where: {
-            OR: [
-              { name: { contains: query } },
-              { code: { contains: query.toUpperCase() } },
-              { region: { contains: query } },
-            ],
-          },
-          take: 20,
-        }),
-        prisma.client.findMany({
-          where: {
-            archived: false,
-            OR: [
-              { name: { contains: query } },
-              { code: { contains: query.toUpperCase() } },
-            ],
-          },
-          include: { country: true },
-          take: 20,
-        }),
-        prisma.hardwareTable.findMany({
-          where: {
-            OR: [
-              { tableName: { contains: query } },
-              { tableCode: { contains: query.toUpperCase() } },
-            ],
-          },
-          include: { client: true },
-          take: 20,
-        }),
-      ])
-    : [[], [], []];
+  let countries: Awaited<ReturnType<typeof store.listCountries>> = [];
+  let clients: Awaited<ReturnType<typeof store.listClients>> = [];
+  let tables: Array<{
+    id: string;
+    tableName: string;
+    tableCode: string;
+    status: import("@/lib/models").HealthStatus;
+    clientId: string;
+    clientName: string;
+  }> = [];
+
+  if (query) {
+    countries = (await store.listCountries())
+      .filter(
+        (c) =>
+          c.name.toLowerCase().includes(query) ||
+          c.code.toLowerCase().includes(query) ||
+          c.region.toLowerCase().includes(query),
+      )
+      .slice(0, 20);
+    clients = (await store.listClients({ archived: false }))
+      .filter(
+        (c) => c.name.toLowerCase().includes(query) || c.code.toLowerCase().includes(query),
+      )
+      .slice(0, 20);
+    for (const c of await store.listClients({ archived: false })) {
+      const rows = await store.listTables(c.id);
+      for (const t of rows) {
+        if (
+          t.tableName.toLowerCase().includes(query) ||
+          t.tableCode.toLowerCase().includes(query)
+        ) {
+          tables.push({
+            id: t.id,
+            tableName: t.tableName,
+            tableCode: t.tableCode,
+            status: t.status,
+            clientId: c.id,
+            clientName: c.name,
+          });
+        }
+      }
+    }
+    tables = tables.slice(0, 20);
+  }
 
   return (
     <div>
@@ -58,12 +68,12 @@ export default async function SearchPage({
             <div className="stack-sm" style={{ marginTop: 12 }}>
               {countries.length ? (
                 countries.map((c) => (
-                  <Link key={c.id} href={`/countries/${c.code}`} style={{ fontWeight: 600, color: "var(--brand-primary)" }}>
+                  <Link key={c.id} href={`/countries/${c.code}`}>
                     {c.name} ({c.code})
                   </Link>
                 ))
               ) : (
-                <p className="muted">No countries</p>
+                <p className="muted">No matches</p>
               )}
             </div>
           </div>
@@ -71,19 +81,15 @@ export default async function SearchPage({
         <div className="panel">
           <div className="panel-body">
             <h2 style={{ margin: 0, fontSize: "1.05rem" }}>Clients</h2>
-            <div className="stack" style={{ marginTop: 12 }}>
+            <div className="stack-sm" style={{ marginTop: 12 }}>
               {clients.length ? (
                 clients.map((c) => (
-                  <Link key={c.id} href={`/clients/${c.id}`} className="row" style={{ borderBottom: "1px solid var(--line-2)", paddingBottom: 8 }}>
-                    <span>
-                      <strong>{c.name}</strong>
-                      <div className="muted" style={{ fontSize: "0.78rem" }}>{c.country.name}</div>
-                    </span>
-                    <HealthBadge status={c.healthStatus} />
+                  <Link key={c.id} href={`/clients/${c.id}`}>
+                    {c.name} · {c.country.name}
                   </Link>
                 ))
               ) : (
-                <p className="muted">No clients</p>
+                <p className="muted">No matches</p>
               )}
             </div>
           </div>
@@ -94,16 +100,13 @@ export default async function SearchPage({
             <div className="stack-sm" style={{ marginTop: 12 }}>
               {tables.length ? (
                 tables.map((t) => (
-                  <Link key={t.id} href={`/clients/${t.clientId}`} className="row">
-                    <span>
-                      <strong>{t.tableName}</strong>
-                      <div className="muted" style={{ fontSize: "0.78rem" }}>{t.tableCode}</div>
-                    </span>
+                  <div key={t.id} className="row">
+                    <Link href={`/clients/${t.clientId}`}>{t.tableName}</Link>
                     <HealthBadge status={t.status} />
-                  </Link>
+                  </div>
                 ))
               ) : (
-                <p className="muted">No tables</p>
+                <p className="muted">No matches</p>
               )}
             </div>
           </div>

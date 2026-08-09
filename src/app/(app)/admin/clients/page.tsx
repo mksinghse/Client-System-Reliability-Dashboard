@@ -1,16 +1,14 @@
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { ClientAdminForm } from "@/components/ClientAdminForm";
 import { HealthBadge } from "@/components/HealthBadge";
 import { relativeTime } from "@/lib/utils";
 
 export default async function AdminClientsPage() {
   const [clients, countries] = await Promise.all([
-    prisma.client.findMany({
-      include: { country: true },
-      orderBy: [{ archived: "asc" }, { name: "asc" }],
-    }),
-    prisma.country.findMany({ orderBy: { name: "asc" } }),
+    store.listClients(),
+    store.listCountries(),
   ]);
+  clients.sort((a, b) => Number(a.archived) - Number(b.archived) || a.name.localeCompare(b.name));
 
   return (
     <div>

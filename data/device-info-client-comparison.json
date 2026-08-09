@@ -1,0 +1,136 @@
+{
+  "clients": [
+    {
+      "client": "GM",
+      "total": 783,
+      "ok": 771,
+      "failed": 12,
+      "okPct": 98.5,
+      "ram": "16GB (100%)",
+      "ramUniform": true,
+      "type": "DDR4",
+      "brands": "TeamGroup (770), Crucial (1)",
+      "heapNow": "8192M",
+      "heapDist": {
+        "8192M/8192M": 770,
+        "N/A/N/A": 1
+      },
+      "fleetMax": "8192M",
+      "osPrimary": "RL 8.9 (615)",
+      "tempAvg": 56.2,
+      "tempMax": 70.0,
+      "hot70": 1,
+      "collected": "2026-08-03"
+    },
+    {
+      "client": "Melco",
+      "total": 695,
+      "ok": 657,
+      "failed": 38,
+      "okPct": 94.5,
+      "ram": "16GB (100%)",
+      "ramUniform": true,
+      "type": "DDR4",
+      "brands": "TeamGroup (657)",
+      "heapNow": "4096M",
+      "heapDist": {
+        "4096M/4096M": 655,
+        "N/A/N/A": 1,
+        "8192M/8192M": 1
+      },
+      "fleetMax": "8192M",
+      "osPrimary": "RL 9.6 (306)",
+      "tempAvg": 48.7,
+      "tempMax": 59.0,
+      "hot70": 0,
+      "collected": "2026-08-03"
+    },
+    {
+      "client": "SJM",
+      "total": 927,
+      "ok": 924,
+      "failed": 3,
+      "okPct": 99.7,
+      "ram": "16GB (100%)",
+      "ramUniform": true,
+      "type": "DDR4",
+      "brands": "TeamGroup (923), Crucial (1)",
+      "heapNow": "10240M",
+      "heapDist": {
+        "10240M/10240M": 917,
+        "N/A/7168M": 4,
+        "N/A/N/A": 3
+      },
+      "fleetMax": "10240M*",
+      "osPrimary": "RL 9.6 (351)",
+      "tempAvg": 53.1,
+      "tempMax": 65.0,
+      "hot70": 0,
+      "collected": "2026-08-03"
+    },
+    {
+      "client": "SW",
+      "total": 164,
+      "ok": 164,
+      "failed": 0,
+      "okPct": 100.0,
+      "ram": "16GB (100%)",
+      "ramUniform": true,
+      "type": "DDR4",
+      "brands": "TeamGroup (163), Crucial (1)",
+      "heapNow": "4096M",
+      "heapDist": {
+        "4096M/4096M": 162,
+        "8192M/8192M": 2
+      },
+      "fleetMax": "8192M",
+      "osPrimary": "RL 8.9 (153)",
+      "tempAvg": 55.6,
+      "tempMax": 66.0,
+      "hot70": 0,
+      "collected": "2026-08-03"
+    },
+    {
+      "client": "Wynn",
+      "total": 545,
+      "ok": 529,
+      "failed": 16,
+      "okPct": 97.1,
+      "ram": "16GB (100%)",
+      "ramUniform": true,
+      "type": "DDR4",
+      "brands": "TeamGroup (529)",
+      "heapNow": "4096M",
+      "heapDist": {
+        "4096M/4096M": 529
+      },
+      "fleetMax": "8192M",
+      "osPrimary": "RL 8.9 (422)",
+      "tempAvg": 53.6,
+      "tempMax": 67.0,
+      "hot70": 0,
+      "collected": "2026-08-03"
+    },
+    {
+      "client": "MGM",
+      "total": 707,
+      "ok": 645,
+      "failed": 62,
+      "okPct": 91.2,
+      "ram": "8GB 60% / 32GB 38% / 16GB 2%",
+      "ramUniform": false,
+      "type": "DDR3+DDR4",
+      "brands": "86F1 (M4S0) (248), Transcend (195), Kingston (192), TeamGroup (10)",
+      "heapNow": "4096M",
+      "heapDist": {
+        "4096M/4096M": 645
+      },
+      "fleetMax": "4096M",
+      "osPrimary": "RL 9.6 (645)",
+      "tempAvg": 51.8,
+      "tempMax": 100.0,
+      "hot70": 29,
+      "collected": "2026-08-04"
+    }
+  ]
+}

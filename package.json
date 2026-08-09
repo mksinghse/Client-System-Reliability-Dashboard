@@ -8,18 +8,21 @@
     "start": "next start -H 0.0.0.0 -p ${PORT:-3000}",
     "start:prod": "node scripts/start-prod.mjs",
     "lint": "eslint .",
-    "test": "tsx --test src/lib/collector-parser.test.ts",
-    "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "test": "tsx --test src/lib/collector-parser.test.ts src/lib/support-log-parser.test.ts",
+    "db:seed": "tsx scripts/seed-dynamodb.ts",
+    "postinstall": "node -e \"process.exit(0)\""
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1106.0",
+    "@aws-sdk/lib-dynamodb": "^3.1106.0",
+    "@aws-sdk/util-dynamodb": "^3.996.7",
     "@prisma/client": "^6.19.2",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "jszip": "^3.10.1",
     "lucide-react": "^1.30.0",
     "next": "15.5.23",
     "prisma": "^6.19.2",
@@ -27,20 +30,27 @@
     "react-dom": "19.1.0",
     "recharts": "^3.10.1",
     "tailwind-merge": "^3.6.0",
+    "uuid": "^14.0.1",
     "zod": "^4.4.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@aws-amplify/backend": "^1.24.0",
+    "@aws-amplify/backend-cli": "^1.9.0",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.43",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
+    "aws-cdk-lib": "^2.263.0",
+    "constructs": "^10.8.1",
     "dotenv": "^17.4.2",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.23",
     "tailwindcss": "^4",
     "tsx": "^4.23.11",
-    "typescript": "^5"
+    "typescript": "^5.9.3"
   }
 }

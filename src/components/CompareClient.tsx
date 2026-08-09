@@ -17,6 +17,8 @@ type Comparison = {
     warningIssues: number;
     availabilityPct: number;
     cpuUtilization: number;
+    heapMb: number;
+    tempAvg: number;
     openFindings: number;
     trend: Array<{ date: string; score: number }>;
   }>;
@@ -43,12 +45,13 @@ export function CompareClient({
 
   const metrics = useMemo(
     () => [
-      { key: "healthScore", label: "Health Score" },
-      { key: "tableCount", label: "Table Count" },
-      { key: "criticalIssues", label: "Critical Issues" },
-      { key: "warningIssues", label: "Warning Issues" },
-      { key: "availabilityPct", label: "Availability %" },
-      { key: "cpuUtilization", label: "CPU Utilization %" },
+      { key: "healthScore", label: "Health Score (OK %)" },
+      { key: "tableCount", label: "Devices" },
+      { key: "criticalIssues", label: "FAILED devices" },
+      { key: "warningIssues", label: "Hot ≥70°C" },
+      { key: "availabilityPct", label: "OK %" },
+      { key: "heapMb", label: "Heap now (MB)" },
+      { key: "tempAvg", label: "Temp avg (°C)" },
       { key: "openFindings", label: "Open Findings" },
     ],
     [],
@@ -134,6 +137,8 @@ export function CompareClient({
                       warningIssues: c.warningIssues,
                       availabilityPct: c.availabilityPct,
                       cpuUtilization: c.cpuUtilization,
+                      heapMb: c.heapMb,
+                      tempAvg: c.tempAvg,
                       openFindings: c.openFindings,
                     }[m.key];
                     return (

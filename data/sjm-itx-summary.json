@@ -1,0 +1,247 @@
+{
+  "parsed": 916,
+  "motherboard": [
+    {
+      "product": "W480EI-IM-A R3.0",
+      "count": 916
+    }
+  ],
+  "system": [
+    {
+      "mfg": "ASUSTeK COMPUTER INC.",
+      "product": "AIOT W480EI-IM-A R3.0",
+      "count": 916
+    }
+  ],
+  "bios": [
+    {
+      "version": "2.02.00",
+      "date": "11/16/2023",
+      "count": 910
+    },
+    {
+      "version": "2.04.00",
+      "date": "09/20/2024",
+      "count": 2
+    },
+    {
+      "version": "2.09.00",
+      "date": "09/15/2025",
+      "count": 2
+    },
+    {
+      "version": "1.03.00",
+      "date": "02/14/2022",
+      "count": 1
+    },
+    {
+      "version": "1.06.00",
+      "date": "05/03/2023",
+      "count": 1
+    }
+  ],
+  "dimm": [
+    {
+      "part": "TEAMGROUP-SD4-3200",
+      "count": 915
+    },
+    {
+      "part": "CT16G4SFRA32A.M16FR",
+      "count": 1
+    }
+  ],
+  "heap": [
+    {
+      "flags": "-Xms10240M -Xmx10240M",
+      "count": 908
+    },
+    {
+      "flags": "unknown",
+      "count": 4
+    },
+    {
+      "flags": "-Xmx7168M",
+      "count": 4
+    }
+  ],
+  "load": {
+    "load1": {
+      "n": 916,
+      "min": 0.0,
+      "max": 4.4,
+      "avg": 0.544,
+      "median": 0.42,
+      "p95": 1.26
+    },
+    "load5": {
+      "n": 916,
+      "min": 0.0,
+      "max": 2.2,
+      "avg": 0.518,
+      "median": 0.45,
+      "p95": 1.15
+    },
+    "load15": {
+      "n": 916,
+      "min": 0.0,
+      "max": 2.15,
+      "avg": 0.501,
+      "median": 0.455,
+      "p95": 1.11
+    },
+    "load1_per_cpu": {
+      "n": 916,
+      "min": 0.0,
+      "max": 0.367,
+      "avg": 0.045,
+      "median": 0.035,
+      "p95": 0.105
+    }
+  },
+  "cpu": {
+    "cpu_used_pct": {
+      "n": 916,
+      "min": 0.17,
+      "max": 48.33,
+      "avg": 8.018,
+      "median": 9.26,
+      "p95": 17.6
+    },
+    "cpu_iowait_pct": {
+      "n": 916,
+      "min": 0.0,
+      "max": 6.34,
+      "avg": 0.21,
+      "median": 0.08,
+      "p95": 0.58
+    },
+    "cpu_idle_pct": {
+      "n": 916,
+      "min": 51.67,
+      "max": 99.83,
+      "avg": 91.982,
+      "median": 90.74,
+      "p95": 98.25
+    }
+  },
+  "mem": {
+    "host_mem_total_mb": {
+      "n": 916,
+      "min": 15426.0,
+      "max": 15580.0,
+      "avg": 15557.58,
+      "median": 15554.0,
+      "p95": 15568.0
+    },
+    "mem_avail_mb": {
+      "n": 916,
+      "min": 473.0,
+      "max": 13151.0,
+      "avg": 1307.519,
+      "median": 1149.5,
+      "p95": 2182.0
+    },
+    "jvm_rss_mb": {
+      "n": 916,
+      "min": 0.0,
+      "max": 12326.0,
+      "avg": 11084.704,
+      "median": 11212.5,
+      "p95": 11541.0
+    },
+    "jvm_rss_vs_xmx_pct": {
+      "n": 912,
+      "min": 85.7,
+      "max": 120.4,
+      "avg": 108.866,
+      "median": 109.5,
+      "p95": 112.7
+    },
+    "jvm_rss_vs_host_pct": {
+      "n": 916,
+      "min": 0.0,
+      "max": 79.3,
+      "avg": 71.25,
+      "median": 72.1,
+      "p95": 74.2
+    }
+  },
+  "pressure": {
+    "RSS_NEAR_XMX": 907,
+    "OK": 9
+  },
+  "bacctable": {
+    "running": 912,
+    "exited": 4
+  },
+  "load1_buckets": {
+    "<1": 765,
+    "1-3": 147,
+    "3-6": 4
+  },
+  "top_load": [
+    {
+      "label": "CL1804",
+      "load1": 4.4,
+      "load1_per_cpu": 0.367,
+      "cpu_used_pct": 3.74
+    },
+    {
+      "label": "GL1115",
+      "load1": 3.92,
+      "load1_per_cpu": 0.327,
+      "cpu_used_pct": 2.83
+    },
+    {
+      "label": "CL0809",
+      "load1": 3.13,
+      "load1_per_cpu": 0.261,
+      "cpu_used_pct": 2.0
+    },
+    {
+      "label": "PB4852",
+      "load1": 3.05,
+      "load1_per_cpu": 0.254,
+      "cpu_used_pct": 9.25
+    },
+    {
+      "label": "LP0975",
+      "load1": 2.97,
+      "load1_per_cpu": 0.248,
+      "cpu_used_pct": 2.33
+    },
+    {
+      "label": "PB4815",
+      "load1": 2.69,
+      "load1_per_cpu": 0.224,
+      "cpu_used_pct": 9.09
+    },
+    {
+      "label": "PB4209",
+      "load1": 2.43,
+      "load1_per_cpu": 0.203,
+      "cpu_used_pct": 12.75
+    },
+    {
+      "label": "PB4306",
+      "load1": 2.2,
+      "load1_per_cpu": 0.183,
+      "cpu_used_pct": 10.26
+    },
+    {
+      "label": "LP3806",
+      "load1": 2.15,
+      "load1_per_cpu": 0.179,
+      "cpu_used_pct": 25.83
+    },
+    {
+      "label": "GL0228",
+      "load1": 2.15,
+      "load1_per_cpu": 0.179,
+      "cpu_used_pct": 3.5
+    }
+  ],
+  "nproc": {
+    "12": 916
+  }
+}

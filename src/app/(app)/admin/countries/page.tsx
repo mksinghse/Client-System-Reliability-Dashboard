@@ -1,11 +1,13 @@
-import { prisma } from "@/lib/db";
+import { store } from "@/lib/ddb/store";
 import { CountryAdminForm } from "@/components/CountryAdminForm";
 
 export default async function AdminCountriesPage() {
-  const countries = await prisma.country.findMany({
-    include: { _count: { select: { clients: true } } },
-    orderBy: { name: "asc" },
-  });
+  const countries = await store.listCountries();
+  const clients = await store.listClients({ archived: false });
+  const countByCountry = new Map<string, number>();
+  for (const c of clients) {
+    countByCountry.set(c.countryId, (countByCountry.get(c.countryId) ?? 0) + 1);
+  }
 
   return (
     <div>
@@ -37,7 +39,7 @@ export default async function AdminCountriesPage() {
                     <td>{c.name}</td>
                     <td>{c.code}</td>
                     <td>{c.region}</td>
-                    <td>{c._count.clients}</td>
+                    <td>{countByCountry.get(c.id) ?? 0}</td>
                   </tr>
                 ))}
               </tbody>

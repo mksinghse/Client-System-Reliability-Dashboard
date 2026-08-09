@@ -67,18 +67,45 @@ export default function LoginPage() {
             </select>
           </div>
           {error ? (
-            <div style={{ background: "#fef3f2", border: "1px solid #fecdca", color: "#912018", padding: "0.7rem 0.85rem", borderRadius: 10, fontSize: "0.85rem" }}>
+            <div
+              style={{
+                background: "#fef3f2",
+                border: "1px solid #fecdca",
+                color: "#912018",
+                padding: "0.7rem 0.85rem",
+                borderRadius: 10,
+                fontSize: "0.85rem",
+              }}
+            >
               {error}
             </div>
           ) : null}
           <button className="btn btn-primary" type="submit" disabled={pending} style={{ width: "100%", minHeight: 52 }}>
-            {pending ? "Signing in…" : "Sign in with SSO"}
+            {pending ? "Connecting…" : "Connect to Dashboard"}
           </button>
         </form>
 
-        <ul className="stack-sm" style={{ marginTop: "1.4rem", paddingTop: "1rem", borderTop: "1px solid var(--line-2)", listStyle: "none" }}>
+        <ul
+          className="stack-sm"
+          style={{
+            marginTop: "1.4rem",
+            paddingTop: "1rem",
+            borderTop: "1px solid var(--line-2)",
+            listStyle: "none",
+          }}
+        >
           <li style={{ display: "flex", gap: 12, alignItems: "center", fontSize: "0.88rem" }}>
-            <span style={{ width: 30, height: 30, borderRadius: 9, background: "#e8f6f8", color: "var(--brand-primary)", display: "inline-grid", placeItems: "center" }}>
+            <span
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 9,
+                background: "#e8f6f8",
+                color: "var(--brand-primary)",
+                display: "inline-grid",
+                placeItems: "center",
+              }}
+            >
               <ShieldCheck size={16} />
             </span>
             <span>
@@ -87,13 +114,6 @@ export default function LoginPage() {
             </span>
           </li>
         </ul>
-
-        <p className="muted" style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.82rem" }}>
-          Design language aligned with{" "}
-          <a href="https://cto-dashboard.aiwdts.com/" style={{ color: "#2f6feb", fontWeight: 600 }}>
-            CTO Dashboard
-          </a>
-        </p>
       </div>
     </div>
   );

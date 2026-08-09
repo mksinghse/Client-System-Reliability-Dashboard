@@ -9,6 +9,7 @@ import {
   Globe2,
   LayoutDashboard,
   LogOut,
+  MonitorSmartphone,
   Search,
   Settings2,
   UploadCloud,
@@ -19,6 +20,8 @@ import { useMemo, useState, useTransition } from "react";
 const nav = [
   { href: "/dashboard", label: "Executive", icon: LayoutDashboard },
   { href: "/countries", label: "Countries", icon: Globe2 },
+  { href: "/clients", label: "Clients", icon: Building2 },
+  { href: "/devices", label: "Devices", icon: MonitorSmartphone },
   { href: "/compare", label: "Compare", icon: GitCompare },
   { href: "/admin", label: "Admin", icon: Settings2 },
   { href: "/admin/uploads", label: "Uploads", icon: UploadCloud },

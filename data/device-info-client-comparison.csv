@@ -1,0 +1,7 @@
+Client,Total,OK,FAILED,OK_Pct,RAM_Profile,Memory_Type,Brands,Heap_Now,Fleet_Max_Heap,Temp_Avg_C,Temp_Max_C,Hot_Ge_70,OS_Primary,Collected
+GM,783,771,12,98.5,16GB (100%),DDR4,"TeamGroup (770); Crucial (1)",8192M,8192M,56.2,70,1,Rocky 8.9,2026-08-03
+Melco,695,657,38,94.5,16GB (100%),DDR4,TeamGroup (657),4096M,8192M,48.7,59,0,Rocky 9.6,2026-08-03
+SJM,927,924,3,99.7,16GB (100%),DDR4,"TeamGroup (923); Crucial (1)",10240M,10240M,53.1,65,0,Rocky 9.6,2026-08-03
+SW,164,164,0,100.0,16GB (100%),DDR4,"TeamGroup (163); Crucial (1)",4096M,8192M,55.6,66,0,Rocky 8.9,2026-08-03
+Wynn,545,529,16,97.1,16GB (100%),DDR4,TeamGroup (529),4096M,8192M,53.6,67,0,Rocky 8.9,2026-08-03
+MGM,707,645,62,91.2,"8GB 60% / 32GB 38% / 16GB 2%",DDR3+DDR4,"86F1/M4S0 (248); Transcend (195); Kingston (192); TeamGroup (10)",4096M,4096M,51.8,100,29,Rocky 9.6,2026-08-04

@@ -42,7 +42,7 @@ Enterprise operations platform for global client system reliability, hardware he
 | Concern | Choice |
 | --- | --- |
 | API | Next.js Route Handlers under `/api/*` |
-| Auth | Cookie session (`wdts_hm_session`) with role gate (VIEWER/OPERATOR/ADMIN) |
+| Auth | Cookie session (`wdts_hm_session`) with role gate (VIEWER/OPERATOR/ADMIN); Entra SSO pending approval |
 | Parser | `src/lib/collector-parser.ts` (Zod) |
 | Ingest | `src/lib/ingest.ts` transactional upsert + snapshot + audit |
 | Analytics | `src/lib/analytics.ts` aggregation layer |
@@ -88,7 +88,7 @@ Server pages load aggregated views directly via Prisma/analytics (no extra BFF h
 ## 5. UI/UX screen map
 
 ### Login
-CTO-aligned centered card, maroon brand lockup, SSO-style CTA, secure trust row, light atmospheric gradients. Dark mode supported via `data-theme`.
+CTO-aligned centered card, maroon brand lockup, Connect to Dashboard CTA, secure trust row, light atmospheric gradients. Dark mode supported via `data-theme`.
 
 ### Executive Dashboard
 Global KPIs, country map, health pie, region stats, 14-day trend, issue classification, recent uploads.
