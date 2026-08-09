@@ -117,7 +117,7 @@ export default async function UploadsPage({
                 {history.map((h) => (
                   <tr key={h.id}>
                     <td>{h.fileName}</td>
-                    <td>{h.client.name}</td>
+                    <td>{h.client?.name ?? "—"}</td>
                     <td>{h.status}</td>
                     <td>{h.parsedTables}</td>
                     <td className="muted">{h.errorMessage ?? "—"}</td>

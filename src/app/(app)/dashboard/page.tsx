@@ -149,10 +149,10 @@ export default async function ExecutiveDashboardPage() {
                   <tr key={u.id}>
                     <td>
                       <Link href={`/clients/${u.clientId}`} style={{ fontWeight: 600, color: "var(--brand-primary)" }}>
-                        {u.client.name}
+                        {u.client?.name ?? "Unknown"}
                       </Link>
                     </td>
-                    <td>{u.client.country.name}</td>
+                    <td>{u.client?.country?.name ?? "—"}</td>
                     <td>{u.status}</td>
                     <td>{relativeTime(u.createdAt)}</td>
                   </tr>

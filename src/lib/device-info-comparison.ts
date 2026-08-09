@@ -20,7 +20,7 @@ export type DeviceInfoClient = {
   collected: string;
 };
 
-export const DEVICE_INFO_CLIENTS = comparison.clients as DeviceInfoClient[];
+export const DEVICE_INFO_CLIENTS = comparison.clients as unknown as DeviceInfoClient[];
 
 export function getDeviceInfoFleetSummary() {
   const fleetTotal = DEVICE_INFO_CLIENTS.reduce((s, c) => s + c.total, 0);

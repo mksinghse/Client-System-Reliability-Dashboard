@@ -4,7 +4,6 @@ import {
   PutCommand,
   QueryCommand,
   ScanCommand,
-  UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { getDocClient, getTableName } from "./client";
 import { newId, nowIso } from "./ids";
