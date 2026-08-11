@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 
-export function ThemeToggle() {
+export function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -23,10 +23,18 @@ export function ThemeToggle() {
     document.documentElement.setAttribute("data-theme", next);
   }
 
+  const label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+
   return (
-    <button type="button" onClick={toggle} aria-label="Toggle theme">
-      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-      <span style={{ marginLeft: 6 }}>{theme === "dark" ? "Light" : "Dark"}</span>
+    <button
+      type="button"
+      onClick={toggle}
+      className={compact ? "header-icon-btn" : undefined}
+      aria-label={label}
+      title={label}
+    >
+      {theme === "dark" ? <Sun size={16} strokeWidth={2} /> : <Moon size={16} strokeWidth={2} />}
+      {!compact ? <span style={{ marginLeft: 6 }}>{theme === "dark" ? "Light" : "Dark"}</span> : null}
     </button>
   );
 }

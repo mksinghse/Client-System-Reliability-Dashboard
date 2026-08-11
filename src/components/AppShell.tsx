@@ -74,11 +74,24 @@ export function AppShell({
             style={{ color: "#fff" }}
           />
         </form>
-        <div className="app-header__nav">
-          <ThemeToggle />
-          <span style={{ fontSize: "0.85rem", opacity: 0.92 }}>{user.name}</span>
-          <button type="button" onClick={logout}>
-            <LogOut size={15} /> Logout
+        <div className="app-header__actions">
+          <ThemeToggle compact />
+          <div className="header-user" title={user.email}>
+            <span className="header-user__avatar" aria-hidden>
+              {user.name
+                .split(/\s+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map((p) => p[0]?.toUpperCase() ?? "")
+                .join("") || "WD"}
+            </span>
+            <span className="header-user__meta">
+              <span className="header-user__name">{user.name}</span>
+              <span className="header-user__role">{user.role}</span>
+            </span>
+          </div>
+          <button type="button" className="header-icon-btn" onClick={logout} aria-label="Log out" title="Log out">
+            <LogOut size={16} strokeWidth={2} />
           </button>
         </div>
       </header>
