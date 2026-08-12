@@ -55,3 +55,17 @@ export function statusFromScore(score: number): HealthStatus {
   if (score >= 40) return "CRITICAL";
   return "OFFLINE";
 }
+
+/** Mask an IPv4 address for display: hide the first two octets, keep the last two. */
+export function maskIp(ip?: string | null): string {
+  const value = String(ip ?? "").trim();
+  if (!value) return "—";
+
+  const parts = value.split(".");
+  if (parts.length === 4 && parts.every((p) => /^\d{1,3}$/.test(p))) {
+    return `***.***.${parts[2]}.${parts[3]}`;
+  }
+
+  // Non-IPv4: fall back to masking all but the trailing host-like segment.
+  return value.replace(/^[^.]+\.[^.]+/, "***.***");
+}

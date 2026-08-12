@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { DEVICE_COLUMNS, loadDevicesInventory, queryDevices } from "@/lib/devices-inventory";
 import { KpiCard } from "@/components/KpiCard";
+import { maskIp } from "@/lib/utils";
 
 export default async function DevicesPage({
   searchParams,
@@ -46,7 +47,8 @@ export default async function DevicesPage({
           <p className="page-sub">
             Table inventory from Macau master matrices. Disk manufacturer from SUPPORT.log PCI NVMe;
             disk usage from <code>df</code>; <strong>disk life = percentage used</strong>
-            {coverageNote ? ` · ${coverageNote}` : ""}.
+            {coverageNote ? ` · ${coverageNote}` : ""}. IP addresses are masked as
+            <code>***.***.x.x</code> (first two octets hidden).
           </p>
         </div>
       </div>
@@ -106,7 +108,7 @@ export default async function DevicesPage({
                 {result.devices.map((d) => (
                   <tr key={`${d.client}-${d.ip}-${d.table_name}-${d.hostname}`}>
                     {DEVICE_COLUMNS.map((c) => (
-                      <td key={c.key}>{d[c.key] || "—"}</td>
+                      <td key={c.key}>{c.key === "ip" ? maskIp(d.ip) : d[c.key] || "—"}</td>
                     ))}
                   </tr>
                 ))}
