@@ -3,6 +3,12 @@ import { DEVICE_COLUMNS, loadDevicesInventory, queryDevices } from "@/lib/device
 import { KpiCard } from "@/components/KpiCard";
 import { maskIp } from "@/lib/utils";
 
+function displayDeviceField(key: string, value: string) {
+  if (!value) return "—";
+  if (key === "ip" || key === "table_name") return maskIp(value);
+  return value;
+}
+
 export default async function DevicesPage({
   searchParams,
 }: {
@@ -47,7 +53,7 @@ export default async function DevicesPage({
           <p className="page-sub">
             Table inventory from Macau master matrices. Disk manufacturer from SUPPORT.log PCI NVMe;
             disk usage from <code>df</code>; <strong>disk life = percentage used</strong>
-            {coverageNote ? ` · ${coverageNote}` : ""}. IP addresses are masked as
+            {coverageNote ? ` · ${coverageNote}` : ""}. Table and IP values are masked as
             <code>***.***.x.x</code> (first two octets hidden).
           </p>
         </div>
@@ -108,7 +114,7 @@ export default async function DevicesPage({
                 {result.devices.map((d) => (
                   <tr key={`${d.client}-${d.ip}-${d.table_name}-${d.hostname}`}>
                     {DEVICE_COLUMNS.map((c) => (
-                      <td key={c.key}>{c.key === "ip" ? maskIp(d.ip) : d[c.key] || "—"}</td>
+                      <td key={c.key}>{displayDeviceField(c.key, d[c.key] || "")}</td>
                     ))}
                   </tr>
                 ))}
